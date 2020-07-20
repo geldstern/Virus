@@ -32,7 +32,7 @@ public class MenuHandler : MonoBehaviour
     // Deaktiviert das Hauptmenu mit Animation:
     public IEnumerator HideMenu(int index)
     {
-        Debug.Log("enter HideMenu()");
+        Debug.Log("enter " + gameObject.name + "." + " HideMenu()");
 
         for (float ft = 1f; ft >= 0f; ft -= 0.05f)
         {
@@ -62,7 +62,7 @@ public class MenuHandler : MonoBehaviour
             yield return null;
         }
 
-        Debug.Log("exit HideMenu()");
+        Debug.Log("exit " + gameObject.name + "." + " HideMenu()");
         //gameObject.SetActive(false);
     }
 
@@ -70,7 +70,7 @@ public class MenuHandler : MonoBehaviour
     // Aktiviert das Hauptmenu mit Animation:
     public IEnumerator ShowMenu()
     {
-        Debug.Log("enter ShowMenu()");
+        Debug.Log("enter " + gameObject.name + "." + " ShowMenu()");
         for (float ft = 0f; ft <= 1; ft += 0.05f)
         {
             foreach (Transform child in transform)
@@ -87,6 +87,6 @@ public class MenuHandler : MonoBehaviour
             }
             yield return null;
         }
-        Debug.Log("exit ShowMenu()");
+        Debug.Log("exit " + gameObject.name + "." + " ShowMenu()");
     }
 }

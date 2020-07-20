@@ -27,30 +27,40 @@ public class FallingObjectController : MonoBehaviour
         timeShift = Random.Range(0, 90);
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
+    /// </summary>
+    void FixedUpdate()
     {
-        // Rotation:
+                // Rotation:
         if (isRotating)
         {
             rb.angularVelocity = angularVelocity;
         }
-        // Wabereffekt:
-        if (isScaling)
-        {
-            transform.localScale = new Vector3(initialScale.x + 0.1f * Mathf.Sin(timeShift + Time.time * 10),
-                    initialScale.y + 0.1f * Mathf.Cos(timeShift + Time.time * 10), 1);
-        }
+
         // Schwebeeffekt:
         if (isShifting)
         {
             rb.velocity = new Vector2(2f * Mathf.Sin(timeShift + Time.time * 10), rb.velocity.y);
+        }
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+                // Wabereffekt:
+        if (isScaling)
+        {
+            transform.localScale = new Vector3(initialScale.x + 0.1f * Mathf.Sin(timeShift + Time.time * 10),
+                    initialScale.y + 0.1f * Mathf.Cos(timeShift + Time.time * 10), 1);
         }
     }
 
     public void OnCollisionEnter2D(Collision2D other)
     {
         //Debug.Log("Collision : " + gameObject.name + " / " + other.collider.name);
+
 
         if (gameObject.name.StartsWith("Virus"))
         {
@@ -61,6 +71,11 @@ public class FallingObjectController : MonoBehaviour
             else if (other.collider.name.StartsWith("Player"))
             {
                 StartCoroutine(DestroyVirus());
+            }
+            else
+            {
+                isShifting = false;
+                isScaling = false;
             }
         }
         else if (gameObject.name.StartsWith("Desinfektion") || gameObject.name.StartsWith("Schutzmaske"))
@@ -73,6 +88,11 @@ public class FallingObjectController : MonoBehaviour
             {
                 StartCoroutine(SpawnScore());
                 StartCoroutine(DestroyItem());
+            }
+            else
+            {
+                isShifting = false;
+                isScaling = false;
             }
         }
 

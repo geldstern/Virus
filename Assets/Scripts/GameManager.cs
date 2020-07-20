@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance; // will hold a reference to the first AudioManager created
 
     public MenuHandler mainMenu, gameOverMenu;
-    
+
     public GameObject gameStatus;
 
     public PlayerController player;
@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
 
     public float spawnProbability = 0.97f;
 
+    private GameObject tom;
     private void Awake()
     {
         if (instance == null)
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        tom = GameObject.FindGameObjectWithTag("Tom");
         currentLevel = Level.EASY;
         StartCoroutine(SetState(State.MENU));
     }
@@ -81,6 +83,10 @@ public class GameManager : MonoBehaviour
                     gameOverMenu.gameObject.SetActive(false);
                 }
 
+                tom.SetActive(true);
+                tom.GetComponent<SpringJoint2D>().enabled = true;
+                tom.transform.GetComponent<TargetJoint2D>().enabled = false;
+
                 mainMenu.gameObject.SetActive(true);
                 yield return StartCoroutine(mainMenu.ShowMenu());
 
@@ -90,14 +96,15 @@ public class GameManager : MonoBehaviour
 
                 currentState = State.PLAY;
 
+                tom.GetComponent<SpringJoint2D>().enabled = false;
+                tom.transform.GetComponent<TargetJoint2D>().enabled = true;
                 yield return StartCoroutine(mainMenu.HideMenu(0));
                 mainMenu.gameObject.SetActive(false);
+                tom.SetActive(false);
 
                 gameStatus.SetActive(true);
 
                 player.gameObject.SetActive(true);
-                player.transform.localScale = new Vector3(0.7f, 0.7f, 1);
-                player.transform.position = new Vector3(0f, -4.87f, 0);
                 yield return StartCoroutine(player.ShowPlayer());
 
                 //spawnProbability = 0.97f;

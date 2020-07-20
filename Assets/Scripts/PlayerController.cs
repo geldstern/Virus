@@ -19,21 +19,33 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
 
+
         health = 1.0f;
         score = 0;
-        healthLabel.text = "Health : 100%";
-        scoreLabel.text = "Score : 0";
+        if (healthLabel != null && scoreLabel != null)
+        {
+            healthLabel.text = "Health : 100%";
+            scoreLabel.text = "Score : 0";
+        }
         //transform.position = new Vector3(0,0,0);
+    }
+
+    /// <summary>
+    /// This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
+    /// </summary>
+    void FixedUpdate()
+    {
+        if (gameObject.name.StartsWith("PlayersAnchor"))
+        {
+            float horizontalInput = Input.GetAxis("Horizontal");
+            rb.velocity = new Vector2(horizontalInput, 0) * speed;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (health > 0)
-        {
-            float horizontalInput = Input.GetAxis("Horizontal");
-            rb.velocity = new Vector2(horizontalInput, 0) * speed;
-        }
+
     }
 
     // called whenever collision occurs on this gameObject
@@ -93,12 +105,14 @@ public class PlayerController : MonoBehaviour
 
     public IEnumerator RemovePlayer()
     {
+        Debug.Log(Time.time + " : " + "enter RemovePlayer()");
         // Collider und Constraints deaktivieren:
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
-        gameObject.GetComponent<SliderJoint2D>().enabled = false;
+        gameObject.GetComponent<SpringJoint2D>().enabled = false;
+        //gameObject.GetComponent<SliderJoint2D>().enabled = false;
 
         // Objekt einmaligen Kraft- und Drehmomentimpuls mitgeben (Purzeleffekt):
-        rb.AddForce(Vector2.up * 7.6f, ForceMode2D.Impulse);
+        rb.AddForce(Vector2.up * 4.6f, ForceMode2D.Impulse);
         rb.AddTorque(7.6f, ForceMode2D.Impulse);
 
         SpriteRenderer renderer = gameObject.GetComponent<SpriteRenderer>();
@@ -110,10 +124,16 @@ public class PlayerController : MonoBehaviour
             renderer.color = c;
             yield return null;
         }
+        transform.localScale = new Vector3(0.7f, 0.7f, 1);
+        transform.position = new Vector3(0f, -4.87f, 0f);
+
+        Debug.Log(Time.time + " : " + "exit RemovePlayer()");
     }
 
     public IEnumerator ShowPlayer()
     {
+
+        Debug.Log(Time.time + " : " + "enter ShowPlayer()");
 
         health = 1.0f;
         score = 0;
@@ -121,20 +141,10 @@ public class PlayerController : MonoBehaviour
         scoreLabel.text = "Score : 0";
 
 
-
-        Debug.Log(Time.time + " : " + "enter ShowPlayer()");
-        gameObject.GetComponent<BoxCollider2D>().enabled = false;
-        gameObject.GetComponent<SliderJoint2D>().enabled = false;
-        gameObject.GetComponent<TargetJoint2D>().enabled = true;
-
-        do
-        {
-            yield return null;
-        } while (transform.position.y < -3.701f);
-
-        gameObject.GetComponent<TargetJoint2D>().enabled = false;
-        gameObject.GetComponent<SliderJoint2D>().enabled = true;
+        gameObject.GetComponent<SpringJoint2D>().enabled = true;
+        yield return new WaitForSeconds(2f);
         gameObject.GetComponent<BoxCollider2D>().enabled = true;
+
         Debug.Log(Time.time + " : " + "exit ShowPlayer()");
     }
 
